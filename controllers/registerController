@@ -1,0 +1,21 @@
+const User = require('../models/User')
+const CryptoJs = require('crypto-js')
+
+const handleRegister = async (req, res) => {
+    const { user, email, image, pwd } = req.body
+    if(!user || !email || !pwd) return res.status(403).json("fields must be provided")
+    try {
+        encryptPwd = CryptoJs.AES.encrypt(pwd, process.env.HASHED_SHA1)
+        const newUser = await User.create({
+            username:user,
+            email: email,
+            image: image,
+            password: encryptPwd
+        })
+        res.status(201).json(newUser)
+    } catch (error) {
+        res.status(403).json(`Error: ${error.message}`)
+    }
+}
+
+module.exports ={ handleRegister}
